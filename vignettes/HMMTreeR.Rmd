@@ -1,0 +1,57 @@
+---
+title: "How to use HMMTreeR"
+author: "Marius Barth"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(HMMTreeR)
+```
+
+```{r}
+#### Example 1: HMMTree example files for PD model ####
+model <- "pd.eqn"
+data <- "pd.dat"
+nsubj <- 66 #no of cases per data set
+nclass <- 2 #no of latent classes
+nruns <- 5 #no of parameter estimation runs
+fi <- 3 #typ of fisher information: 3 means expected
+mc <- 100000 #no monte-carlo simulation runs
+path = getwd()
+
+res <- lc(model=model, data=data, nsubj=nsubj, nruns=nruns, fi=fi, mc=mc, path=path)
+fit_statistics(res)
+```
+
+
+
+```{r}
+#### Example 2: Rouder et al. (2008) Exp1 ####
+
+# increase nclass until complexity penalty overtakes improvement in fit
+res <- lc(model=model, data=data, nsubj=nsubj, nclass_max = 10, nruns=nruns, fi=fi, mc=mc, path=path)
+
+# extract fit statistics
+fit_statistics(res)
+
+
+# extract parameter estimates
+parameter_estimates(res)
+
+
+# compute weighted means for parameter estimates from winning model
+weighted_means(res)
+
+```
+
