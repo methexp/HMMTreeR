@@ -2,7 +2,7 @@
 
 hmmtreec <- function(model, data, nsubj, nclass=1, nruns=1, fi=3, mc=10000, path="./", keep_files = FALSE){
 
-  path_to_exe <-paste0(find.package("HMMTree")[1], "/HMMTreeC.exe")
+  path_to_exe <-paste0(find.package("HMMTreeR")[1], "/HMMTreeC.exe")
   path_ <- getwd()
 
   # prepare
