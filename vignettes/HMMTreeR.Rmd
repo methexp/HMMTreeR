@@ -26,7 +26,7 @@ data <- "pd.dat"
 nsubj <- 66 #no of cases per data set
 nclass <- 2 #no of latent classes
 nruns <- 5 #no of parameter estimation runs
-fi <- 3 #typ of fisher information: 3 means expected
+fi <- "expected" #typ of fisher information: 3 means expected
 mc <- 100000 #no monte-carlo simulation runs
 path = getwd()
 

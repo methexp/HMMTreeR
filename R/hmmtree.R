@@ -178,12 +178,26 @@ model_object <- function(x) {
 #' Starting from a one-class solution, it increments the number of latent classes
 #' until a criterion is met.
 #'
+#' @param fisher_information The type of Fisher Information to be computed.
+#'     Can be either \code{expected}, \code{observed}, or \code{montecarlo}. Defaults to \code{expected}.
+#'
 #' @references
 #'   Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical multinomial processing tree models. \emph{Behavior Research Methods}, \emph{39}, 267-273.
 #'
 #' @export
 
-lc <- function(model, data, nsubj, nclass_max=5, nruns=1, fi=3, mc=10000, comma=0, path="./", crit="AIC"){
+lc <- function(
+  model
+  , data
+  , nsubj
+  , nclass_max = 5
+  , nruns = 1
+  , fisher_information = "expected"
+  , mc = 1e4
+  , comma = 0
+  , path = "./"
+  , crit = "AIC"
+){
 
 
   # Input validation ----
@@ -206,7 +220,7 @@ lc <- function(model, data, nsubj, nclass_max=5, nruns=1, fi=3, mc=10000, comma=
         , nsubj = nsubj
         , nclass = n_classes
         , nruns = nruns
-        , fi = fi
+        , fi = switch(fisher_information, "expected" = 3)
         , mc = mc
         , path=path
         , keep_files = FALSE
