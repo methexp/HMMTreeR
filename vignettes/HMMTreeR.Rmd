@@ -24,14 +24,8 @@ library("HMMTreeR")
 model <- "pd.eqn"
 data <- "pd.dat"
 nsubj <- 66 #no of cases per data set
-nclass <- 2 #no of latent classes
-nruns <- 5 #no of parameter estimation runs
-fi <- "expected" #typ of fisher information: 3 means expected
-mc <- 100000 #no monte-carlo simulation runs
-path = getwd()
 
-res <- lc(model=model, data=data, nsubj=nsubj, nruns=nruns, fi=fi, mc=mc, path=path)
-fit_statistics(res)
+res <- lc(model = model, data = data, nsubj = nsubj, max_classes = 15)
 ```
 
 
@@ -39,8 +33,6 @@ fit_statistics(res)
 ```{r}
 #### Example 2: Rouder et al. (2008) Exp1 ####
 
-# increase nclass until complexity penalty overtakes improvement in fit
-res <- lc(model=model, data=data, nsubj=nsubj, nclass_max = 10, nruns=nruns, fi=fi, mc=mc, path=path)
 
 # extract fit statistics
 fit_statistics(res)
@@ -49,9 +41,11 @@ fit_statistics(res)
 # extract parameter estimates
 parameter_estimates(res)
 
+# compute weighted means for parameter estimates
+weighted_means(res)
 
 # compute weighted means for parameter estimates from winning model
-weighted_means(res)
+weighted_means(res[[5]])
 
 ```
 

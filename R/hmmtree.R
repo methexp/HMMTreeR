@@ -1,12 +1,12 @@
 #' @keywords internal
 
-hmmtreec <- function(model, data, nsubj, nclass=1, nruns=1, fi=3, mc=10000, path="./", keep_files = FALSE){
+hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5, keep_files = FALSE){
 
   path_to_exe <-paste0(find.package("HMMTreeR")[1], "/HMMTreeC.exe")
-  path_ <- getwd()
 
   # prepare
   mc_ <- format(mc, scientific = FALSE)
+  path_ <- getwd()
 
   ## check if input files exist
   model_name <- gsub(model, pattern = ".eqn|.EQN", replacement = "")
@@ -16,28 +16,30 @@ hmmtreec <- function(model, data, nsubj, nclass=1, nruns=1, fi=3, mc=10000, path
   # todo: check model and data files
 
   ## prepare output
-  comma = 0
+  comma <- 0
 
   out <- NULL
-  outfile <- file.path(paste0(model_name, ".out"))
-
+  outfile <- file.path(path_, paste0(dname, ".out"))
+  # print(outfile)
   if(all(file.exists(c(model_, data_)))){
 
     # put together parameter string & call
     pars <- paste(c(model_, data_, nsubj, nclass, nruns, fi, mc_, comma), collapse = "\n")
-    control_file <- write(x = pars, file = paste0(path, "/control_file.txt"))
-    system(command = paste0(path_to_exe, " ", path, "/control_file.txt"))
+    control_file <- write(x = pars, file = "control_file.txt")
+    system(command = paste0(path_to_exe, " control_file.txt"))
 
 
     # check if the call was successful and returned an output file
     # return results from file "modelfilename".out
     if(file.exists(outfile)) {
       out <- read.table(file=outfile, header=TRUE, quote="", comment.char="", row.names=NULL, stringsAsFactors=FALSE)
+    } else {
+      stop("Output from HMMTreeC.exe not found.")
     }
-
+    print(out)
     if(!keep_files) {
       to_remove <- intersect(
-        list.files(path)
+        sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")
         , c(
           paste0(model_name, c(".sps", ".log", ".out"))
           , "control_file.txt"
@@ -58,7 +60,7 @@ hmmtreec <- function(model, data, nsubj, nclass=1, nruns=1, fi=3, mc=10000, path
         )
       )
       # print(to_remove)
-      file.remove(paste0(path, "/", to_remove))
+      file.remove(to_remove)
     }
   }
 
@@ -83,7 +85,7 @@ model_object <- function(x) {
     , Ncases = "n_subjects"
     , NParam = "n_parameters"
     , Nparam = "n_parameters"
-    , FItype = "fischer_information"
+    , FItype = "fisher_information"
     , Failcode = "failcode"
     , NoClasses = "n_classes"
   )
@@ -91,11 +93,12 @@ model_object <- function(x) {
   object$description <- x[, intersect(cols, names(description))]
   colnames(object$description) <- description[colnames(object$description)]
 
+  object$description$fisher_information <- c("none", "observed", "montecarlo", "expected")[object$description$fisher_information + 1]
 
   # model fit ----
 
   fitstats <- c(
-    Lik = "log-likelihood"
+    Lik = "-2*log-likelihood"
     , AIC = "AIC"
     , BIC = "BIC"
     , BIC2 = "BIC2"
@@ -120,18 +123,6 @@ model_object <- function(x) {
 
   weights <- cols[grepl(cols, pattern = "ClassWeight")]
 
-  point_estimates <- weights[!grepl(weights, pattern = "lower|upper")]
-  lower <- weights[grepl(weights, pattern = "lower")]
-  upper <- weights[grepl(weights, pattern = "upper")]
-
-
-  object$class_weights <- data.frame(
-    class = as.numeric(gsub(x = point_estimates, pattern = "ClassWeight_", replacement = ""))
-    , estimate = as.numeric(x[, point_estimates])
-    , lower = as.numeric(x[, lower])
-    , upper = as.numeric(x[, upper])
-  )
-
   if(length(weights)==0) {
     object$class_weights <- data.frame(
       class = 1
@@ -139,7 +130,27 @@ model_object <- function(x) {
       , lower = NA_real_
       , upper = NA_real_
     )
+  } else {
+
+    point_estimates <- weights[!grepl(weights, pattern = "lower|upper")]
+
+    object$class_weights <- data.frame(
+      class = as.numeric(gsub(x = point_estimates, pattern = "ClassWeight_", replacement = ""))
+      , estimate = as.numeric(x[, point_estimates])
+      , lower = NA_real_
+      , upper = NA_real_
+    )
+
+    # only extract CI if avaliable from Fisher Information
+    if(any(grepl(weights, pattern = "lower"))) {
+      lower <- weights[grepl(weights, pattern = "lower")]
+      upper <- weights[grepl(weights, pattern = "upper")]
+
+      object$class_weights$lower <- as.numeric(x[, lower])
+      object$class_weights$upper <- as.numeric(x[, upper])
+    }
   }
+
 
 
 
@@ -161,9 +172,16 @@ model_object <- function(x) {
     parameter = parameter_names
     , class = i_class
     , estimate = as.numeric(x[, paste0(parameter_names, "_", i_class)])
-    , lower = as.numeric(x[, paste0(parameter_names, "_", i_class, "_lower")])
-    , upper = as.numeric(x[, paste0(parameter_names, "_", i_class, "_upper")])
+    , lower = NA_real_
+    , upper = NA_real_
   )
+
+  # only extract CI if avaliable from Fisher Information
+  if(any(grepl(est_cols, pattern = "lower"))) {
+    object$parameter_estimates$lower <- as.numeric(x[, paste0(parameter_names, "_", i_class, "_lower")])
+    object$parameter_estimates$upper <- as.numeric(x[, paste0(parameter_names, "_", i_class, "_upper")])
+  }
+
   # print(paste0(parameter_names, "_", i_class))
 
   # return
@@ -178,11 +196,19 @@ model_object <- function(x) {
 #' Starting from a one-class solution, it increments the number of latent classes
 #' until a criterion is met.
 #'
+#' @param classes,max_classes The number of classes for a single model or the
+#' maximum number of classes. To estimate a single model, specify \code{classes},
+#' to estimate multiple models with increasing numberof classes, specify \Code{max_classes}.
 #' @param fisher_information The type of Fisher Information to be computed.
-#'     Can be either \code{expected}, \code{observed}, or \code{montecarlo}. Defaults to \code{expected}.
+#'    Can be either \code{expected}, \code{montecarlo}, \code{observed}, or \code{none}.
+#'    Defaults to \code{expected}. However, if expected Fisher Information cannot b
+#'    computed, the Monte Carlo method is used.
+#' @param montecarlo_samples The number of simulations to be used for Monte Carlo
+#'   Fisher Information. Defaults to 1e5.
 #'
 #' @references
-#'   Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical multinomial processing tree models. \emph{Behavior Research Methods}, \emph{39}, 267-273.
+#'   Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical
+#'   multinomial processing tree models. \emph{Behavior Research Methods}, \emph{39}, 267-273.
 #'
 #' @export
 
@@ -190,14 +216,19 @@ lc <- function(
   model
   , data
   , nsubj
-  , nclass_max = 5
-  , nruns = 1
+  , classes = NULL
+  , max_classes = 20
+  , runs = 5
   , fisher_information = "expected"
-  , mc = 1e4
-  , comma = 0
-  , path = "./"
+  , montecarlo_samples = 1e5
   , crit = "AIC"
 ){
+
+  # Check if running on Windows
+  if(!Sys.info()[["sysname"]]=="Windows") {
+    stop("Sorry, but model estimation only works on Windows machines. We know this must be disappointing.")
+  }
+
 
 
   # Input validation ----
@@ -211,28 +242,50 @@ lc <- function(
   #pval <- pchisq(q=as.numeric(res[[nclass]]$S1), df=as.numeric(res[[nclass]]$S1_df), lower.tail=FALSE)
   #if ((length(pval)>0) || (pval < .05)){ # aggregate does not fit, estimate latent-class models
 
+  if(!is.null(classes)) {
+    return(
+      model_object(
+        hmmtreec(
+          model = model
+          , data = data
+          , nsubj = nsubj
+          , nclass = classes
+          , nruns = runs
+          , fi = switch(fisher_information, "expected" = 3, "montecarlo" = 2, "observed" = 1, "none" = 0)
+          , mc = montecarlo_samples
+          , keep_files = FALSE
+        )
+      )
+    )
+  }
+
   n_classes <- 1
   repeat {
-    res[[n_classes]] <- model_object(
+     tmp <- model_object(
       hmmtreec(
         model = model
         , data = data
         , nsubj = nsubj
         , nclass = n_classes
-        , nruns = nruns
-        , fi = switch(fisher_information, "expected" = 3)
-        , mc = mc
-        , path=path
+        , nruns = runs
+        , fi = switch(fisher_information, "expected" = 3, "montecarlo" = 2, "observed" = 1)
+        , mc = montecarlo_samples
         , keep_files = FALSE
       )
     )
 
     # Stop estimating more complex models if criterion (i.e., AIC or BIC) increased
-    if(n_classes > 1 && res[[n_classes]]$fit_statistics[[crit]] > res[[n_classes-1]]$fit_statistics[[crit]]) {
+    if(n_classes > 1 && tmp$fit_statistics[[crit]] > res[[n_classes-1]]$fit_statistics[[crit]]) {
       break
     }
+
+    res[[n_classes]] <- tmp
+
+
+
+
     n_classes <- n_classes + 1
-    if(n_classes > nclass_max) {
+    if(n_classes > max_classes) {
       break
     }
   }
