@@ -36,7 +36,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
     } else {
       stop("Output from HMMTreeC.exe not found.")
     }
-    print(out)
+    # print(out)
     if(!keep_files) {
       to_remove <- intersect(
         sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")

@@ -4,8 +4,22 @@
 \alias{lc}
 \title{Fit latent-class MPT models}
 \usage{
-lc(model, data, nsubj, nclass_max = 5, nruns = 1, fi = 3, mc = 10000,
-  comma = 0, path = "./", crit = "AIC")
+lc(model, data, nsubj, classes = NULL, max_classes = 20, runs = 5,
+  fisher_information = "expected", montecarlo_samples = 1e+05,
+  crit = "AIC")
+}
+\arguments{
+\item{classes, max_classes}{The number of classes for a single model or the
+maximum number of classes. To estimate a single model, specify \code{classes},
+to estimate multiple models with increasing numberof classes, specify \Code{max_classes}.}
+
+\item{fisher_information}{The type of Fisher Information to be computed.
+Can be either \code{expected}, \code{montecarlo}, \code{observed}, or \code{none}.
+Defaults to \code{expected}. However, if expected Fisher Information cannot b
+computed, the Monte Carlo method is used.}
+
+\item{montecarlo_samples}{The number of simulations to be used for Monte Carlo
+Fisher Information. Defaults to 1e5.}
 }
 \description{
 This function estimates one or more latent-class MPT models.
@@ -13,5 +27,6 @@ Starting from a one-class solution, it increments the number of latent classes
 until a criterion is met.
 }
 \references{
-Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical multinomial processing tree models. \emph{Behavior Research Methods}, \emph{39}, 267-273.
+Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical
+  multinomial processing tree models. \emph{Behavior Research Methods}, \emph{39}, 267-273.
 }
