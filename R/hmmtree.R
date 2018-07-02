@@ -13,7 +13,8 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
   dname <- strsplit(data, "[.]")[[1]][1]
   model_ <- file.path(path_, model)
   data_ <- file.path(path_, data)
-  # todo: check model and data files
+
+  data_name <- gsub(data, pattern = ".dat|.csv|.txt", replacement = "")
 
   ## prepare output
   comma <- 0
@@ -41,7 +42,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
       to_remove <- intersect(
         sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")
         , c(
-          paste0(model_name, c(".sps", ".log", ".out"))
+          paste0(data_name, c(".sps", ".log", ".out"))
           , "control_file.txt"
           , "lik.out"
           , "lik.err"
