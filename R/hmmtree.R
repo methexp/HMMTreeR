@@ -14,7 +14,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
   model_ <- file.path(path_, model)
   data_ <- file.path(path_, data)
 
-  data_name <- gsub(data, pattern = ".dat|.csv|.txt", replacement = "")
+  data_name <- strsplit(data, split = ".dat|.csv|.txt")[[1]][1]
 
   ## prepare output
   comma <- 0
