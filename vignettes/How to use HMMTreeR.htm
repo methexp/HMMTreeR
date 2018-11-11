@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Marius Barth" />
+
+<meta name="date" content="2018-11-11" />
+
+<title>How to use HMMTreeR</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">How to use HMMTreeR</h1>
+<h4 class="author"><em>Marius Barth</em></h4>
+<h4 class="date"><em>2018-11-11</em></h4>
+
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">#### Example 1: HMMTree example files for PD model ####
+model &lt;-<span class="st"> &quot;pd.eqn&quot;</span>
+data &lt;-<span class="st"> &quot;pd.dat&quot;</span>
+nsubj &lt;-<span class="st"> </span><span class="dv">66</span> <span class="co">#no of cases per data set</span>
+
+res &lt;-<span class="st"> </span><span class="kw">lc</span>(<span class="dt">model =</span> model, <span class="dt">data =</span> data, <span class="dt">nsubj =</span> nsubj, <span class="dt">max_classes =</span> <span class="dv">15</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">#### Example 2: Rouder et al. (2008) Exp1 ####
+
+
+<span class="co"># extract fit statistics</span>
+<span class="kw">fit_statistics</span>(res)
+<span class="co">#&gt;   -2*log-likelihood      AIC      BIC     BIC2 G-squared M1 df_M1 M2 df_M2</span>
+<span class="co">#&gt; 1          2619.996 2623.996 2635.306       NA         0  0     0  0     0</span>
+<span class="co">#&gt; 2          2411.686 2421.686 2449.962 2432.634        NA  0     0  0     0</span>
+<span class="co">#&gt; 3          2343.696 2359.696 2404.939 2377.213        NA  0     0  0     0</span>
+<span class="co">#&gt; 4          2331.763 2353.763 2415.972 2377.849        NA  0     0  0     0</span>
+<span class="co">#&gt; 5          2319.958 2347.958 2427.133 2378.613        NA  0     0  0     0</span>
+<span class="co">#&gt;        S1 df_S1          S2 df_S2</span>
+<span class="co">#&gt; 1 354.828     1 1065.126038     3</span>
+<span class="co">#&gt; 2   0.000     0  118.050452     3</span>
+<span class="co">#&gt; 3   0.000     0   23.794144     3</span>
+<span class="co">#&gt; 4   0.000     0    6.679514     3</span>
+<span class="co">#&gt; 5   0.000     0    0.529224     3</span>
+
+
+<span class="co"># extract parameter estimates</span>
+<span class="kw">parameter_estimates</span>(res)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt;   parameter class estimate    lower    upper</span>
+<span class="co">#&gt; 1         c     1 0.368372 0.328857 0.407886</span>
+<span class="co">#&gt; 2         u     1 0.439280 0.408020 0.470541</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt;   parameter class estimate    lower    upper</span>
+<span class="co">#&gt; 1         c     1 0.366363 0.313789 0.418937</span>
+<span class="co">#&gt; 2         c     2 0.370857 0.317718 0.423995</span>
+<span class="co">#&gt; 3         u     1 0.673044 0.629746 0.716341</span>
+<span class="co">#&gt; 4         u     2 0.147864 0.107717 0.188011</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt;   parameter class estimate    lower    upper</span>
+<span class="co">#&gt; 1         c     1 0.461677 0.405315 0.518040</span>
+<span class="co">#&gt; 2         c     2 0.314395 0.249954 0.378836</span>
+<span class="co">#&gt; 3         c     3 0.218921 0.134283 0.303560</span>
+<span class="co">#&gt; 4         u     1 0.475613 0.412180 0.539046</span>
+<span class="co">#&gt; 5         u     2 0.094952 0.053015 0.136890</span>
+<span class="co">#&gt; 6         u     3 0.848144 0.793432 0.902856</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span>
+<span class="co">#&gt;   parameter class estimate    lower    upper</span>
+<span class="co">#&gt; 1         c     1 0.341000 0.230974 0.451025</span>
+<span class="co">#&gt; 2         c     2 0.317155 0.252791 0.381518</span>
+<span class="co">#&gt; 3         c     3 0.222461 0.137306 0.307617</span>
+<span class="co">#&gt; 4         c     4 0.675751 0.530872 0.820630</span>
+<span class="co">#&gt; 5         u     1 0.493434 0.419260 0.567608</span>
+<span class="co">#&gt; 6         u     2 0.092972 0.050927 0.135018</span>
+<span class="co">#&gt; 7         u     3 0.860708 0.803001 0.918416</span>
+<span class="co">#&gt; 8         u     4 0.435367 0.271800 0.598934</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[5]]</span>
+<span class="co">#&gt;    parameter class estimate     lower    upper</span>
+<span class="co">#&gt; 1          c     1 0.373766  0.291428 0.456105</span>
+<span class="co">#&gt; 2          c     2 0.221289  0.135855 0.306723</span>
+<span class="co">#&gt; 3          c     3 0.501869  0.384407 0.619330</span>
+<span class="co">#&gt; 4          c     4 0.162925  0.033921 0.291928</span>
+<span class="co">#&gt; 5          c     5 0.769064  0.610156 0.927973</span>
+<span class="co">#&gt; 6          u     1 0.488768  0.421695 0.555840</span>
+<span class="co">#&gt; 7          u     2 0.859055  0.802089 0.916021</span>
+<span class="co">#&gt; 8          u     3 0.050182 -0.017271 0.117634</span>
+<span class="co">#&gt; 9          u     4 0.129704  0.067961 0.191448</span>
+<span class="co">#&gt; 10         u     5 0.579499  0.291485 0.867514</span>
+
+<span class="co"># compute weighted means for parameter estimates</span>
+<span class="kw">weighted_means</span>(res)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt;   parameter estimate    lower    upper</span>
+<span class="co">#&gt; 1         c 0.368372 0.328858 0.407886</span>
+<span class="co">#&gt; 2         u 0.439280 0.408019 0.470541</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt;   parameter  estimate     lower     upper</span>
+<span class="co">#&gt; 1         c 0.3683712 0.3155445 0.4211980</span>
+<span class="co">#&gt; 2         u 0.4383568 0.3964382 0.4802754</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt;   parameter  estimate     lower     upper</span>
+<span class="co">#&gt; 1         c 0.3683712 0.3030669 0.4336755</span>
+<span class="co">#&gt; 2         u 0.4318979 0.3760182 0.4877775</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span>
+<span class="co">#&gt;   parameter  estimate     lower     upper</span>
+<span class="co">#&gt; 1         c 0.3683715 0.2670511 0.4696919</span>
+<span class="co">#&gt; 2         u 0.4287451 0.3418537 0.5156366</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[5]]</span>
+<span class="co">#&gt;   parameter  estimate     lower     upper</span>
+<span class="co">#&gt; 1         c 0.3683714 0.2624638 0.4742790</span>
+<span class="co">#&gt; 2         u 0.4291737 0.3261251 0.5322222</span>
+
+<span class="co"># compute weighted means for parameter estimates from winning model</span>
+<span class="kw">weighted_means</span>(res[[<span class="dv">5</span>]])
+<span class="co">#&gt;   parameter  estimate     lower     upper</span>
+<span class="co">#&gt; 1         c 0.3683714 0.2624638 0.4742790</span>
+<span class="co">#&gt; 2         u 0.4291737 0.3261251 0.5322222</span></code></pre></div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
