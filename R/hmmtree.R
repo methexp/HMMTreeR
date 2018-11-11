@@ -26,7 +26,10 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
     # put together parameter string & call
     pars <- paste(c(model_, data_, nsubj, nclass, nruns, fi, mc_, comma), collapse = "\n")
     control_file <- write(x = pars, file = "control_file.txt")
-    system(command = paste0(path_to_exe, " control_file.txt"))
+    system(
+      command = paste0(path_to_exe, " control_file.txt")
+      , show.output.on.console = FALSE
+    )
 
 
     # check if the call was successful and returned an output file
