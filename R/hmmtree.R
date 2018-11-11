@@ -8,11 +8,16 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
   mc_ <- format(mc, scientific = FALSE)
   path_ <- getwd()
 
+  # copy eqn and data file to working directory
+  file.copy(from = model, to = file.path(path_, basename(model)))
+  file.copy(from = data, to = file.path(path_, basename(data)))
+
+
   ## check if input files exist
-  model_name <- gsub(model, pattern = ".eqn|.EQN", replacement = "")
-  dname <- strsplit(data, "[.]")[[1]][1]
-  model_ <- file.path(path_, model)
-  data_ <- file.path(path_, data)
+  model_name <- gsub(basename(model), pattern = ".eqn|.EQN", replacement = "")
+  dname <- strsplit(basename(data), "[.]")[[1]][1]
+  model_file <- file.path(path_, basename(model))
+  data_file <- file.path(path_, basename(data))
 
   data_name <- strsplit(data, split = ".dat|.csv|.txt")[[1]][1]
 
@@ -23,10 +28,10 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
   out <- NULL
   outfile <- file.path(path_, paste0(dname, ".out"))
   # print(outfile)
-  if(all(file.exists(c(model_, data_)))){
+  if(all(file.exists(c(model_file, data_file)))){
 
     # put together parameter string & call
-    pars <- paste(c(model_, data_, nsubj, nclass, nruns, fi, mc_, comma), collapse = "\n")
+    pars <- paste(c(model_file, data_file, nsubj, nclass, nruns, fi, mc_, comma), collapse = "\n")
     control_file <- write(x = pars, file = "control_file.txt")
 
     system(
@@ -47,7 +52,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
       to_remove <- intersect(
         sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")
         , c(
-          paste0(model_name, c(".sps", ".log", ".out"))
+          paste0(data_name, c(".sps", ".log", ".out"))
           , "control_file.txt"
           , "lik.out"
           , "lik.err"
