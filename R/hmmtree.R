@@ -13,7 +13,9 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
   dname <- strsplit(data, "[.]")[[1]][1]
   model_ <- file.path(path_, model)
   data_ <- file.path(path_, data)
-  # todo: check model and data files
+
+  data_name <- strsplit(data, split = ".dat|.csv|.txt")[[1]][1]
+
 
   ## prepare output
   comma <- 0
@@ -26,6 +28,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
     # put together parameter string & call
     pars <- paste(c(model_, data_, nsubj, nclass, nruns, fi, mc_, comma), collapse = "\n")
     control_file <- write(x = pars, file = "control_file.txt")
+
     system(
       command = paste0(path_to_exe, " control_file.txt")
       , show.output.on.console = FALSE
@@ -39,7 +42,7 @@ hmmtreec <- function(model, data, nsubj, nclass = 1, nruns = 1, fi = 3, mc = 1e5
     } else {
       stop("Output from HMMTreeC.exe not found.")
     }
-    print(out)
+
     if(!keep_files) {
       to_remove <- intersect(
         sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")
