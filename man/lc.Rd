@@ -11,11 +11,11 @@ lc(model, data, nsubj, classes = NULL, max_classes = 20, runs = 5,
 \arguments{
 \item{classes, max_classes}{The number of classes for a single model or the
 maximum number of classes. To estimate a single model, specify \code{classes},
-to estimate multiple models with increasing numberof classes, specify \Code{max_classes}.}
+to estimate multiple models with increasing numberof classes, specify \code{max_classes}.}
 
 \item{fisher_information}{The type of Fisher Information to be computed.
 Can be either \code{expected}, \code{montecarlo}, \code{observed}, or \code{none}.
-Defaults to \code{expected}. However, if expected Fisher Information cannot b
+Defaults to \code{expected}. However, if expected Fisher Information cannot be
 computed, the Monte Carlo method is used.}
 
 \item{montecarlo_samples}{The number of simulations to be used for Monte Carlo
