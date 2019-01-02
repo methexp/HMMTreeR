@@ -20,23 +20,13 @@ library("HMMTreeR")
 ```
 
 ```{r}
-#### Example 1: HMMTree example files for PD model ####
-model <- "pd.eqn"
-data <- "pd.dat"
-nsubj <- 66 #no of cases per data set
-
-res <- lc(model = model, data = data, nsubj = nsubj, max_classes = 15)
+# Example 1: HMMTree example files for PD model
+res <- lc(model_file = "pd.eqn", data_file = "pd.dat")
 ```
 
-
-
 ```{r}
-#### Example 2: Rouder et al. (2008) Exp1 ####
-
-
 # extract fit statistics
 fit_statistics(res)
-
 
 # extract parameter estimates
 parameter_estimates(res)
@@ -45,7 +35,7 @@ parameter_estimates(res)
 weighted_means(res)
 
 # compute weighted means for parameter estimates from winning model
-weighted_means(res[[5]])
+weighted_means(res[[length(res)]])
 
 ```
 

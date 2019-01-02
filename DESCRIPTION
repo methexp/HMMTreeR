@@ -1,6 +1,6 @@
 Package: HMMTreeR
 Title: An R Interface to HMMTree
-Version: 0.1.0
+Version: 0.1.1
 Description: HMMTreeR is an R interface to the console
     version of HMMTree by Stahl and Klauer (2007).
 Authors@R: c(
