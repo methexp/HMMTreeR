@@ -125,7 +125,7 @@ lc <- function(
         }
       }
 
-      tmp <- model_object(
+      tmp_hmmtreec <- try(
         hmmtreec(
           model = eqn_file
           , data = dat_file
@@ -137,6 +137,12 @@ lc <- function(
           , keep_files = FALSE
         )
       )
+
+      if(class(tmp_hmmtreec) == "try-error") {
+        break
+      }
+
+      tmp <- model_object(tmp_hmmtreec)
 
       # Stop estimating more complex models if failcodes occur
       if(tmp$description$failcode!=0) {

@@ -51,11 +51,10 @@ hmmtreec <- function(
 
   # check if the call was successful and returned an output file
   # return results from file "modelfilename".out
-  if(file.exists(outfile)) {
-    out <- read.table(file=outfile, header=TRUE, quote="", comment.char="", row.names=NULL, stringsAsFactors=FALSE)
-  } else {
-    stop("Output from HMMTreeC.exe not found.")
-  }
+  out <- try(
+    read.table(file=outfile, header=TRUE, quote="", comment.char="", row.names=NULL, stringsAsFactors=FALSE)
+    , silent = TRUE
+  )
 
   if(!keep_files) {
     to_remove <- intersect(
@@ -85,6 +84,9 @@ hmmtreec <- function(
     file.remove(to_remove)
   }
 
+  if(class(out)=="try-error") {
+    stop("Output from HMMTreeC.exe not found.")
+  }
 
   return(out)
 }

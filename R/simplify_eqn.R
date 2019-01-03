@@ -1,6 +1,6 @@
 #' @keywords internal
 
-simplify_eqn <- function(model_filename, eqn_filename) {
+simplify_eqn <- function(model_filename, eqn_filename = NULL) {
 
   read_lines <- readLines(model_filename, warn = FALSE)
   read_lines <- read_lines[-1] # simply remove first line
@@ -58,11 +58,13 @@ simplify_eqn <- function(model_filename, eqn_filename) {
   }
 
   # Write eqn file
-  writeLines(
-    text = c(n_terms, paste(model$tree, model$cat, model$term, sep = " "))
-    , con = eqn_filename
-    , sep = "\n"
-  )
+  if(!is.null(eqn_filename)) {
+    writeLines(
+      text = c(n_terms, paste(model$tree, model$cat, model$term, sep = " "))
+      , con = eqn_filename
+      , sep = "\n"
+    )
+  }
 
   return(
     list(
