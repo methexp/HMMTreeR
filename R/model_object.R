@@ -20,9 +20,27 @@ model_object <- function(x) {
     , NoClasses = "n_classes"
   )
 
-  object$description <- x[, intersect(cols, names(description))]
-  colnames(object$description) <- description[colnames(object$description)]
+  object$description <- data.frame(
+    data = NA
+    , n_subjects = NA
+    , n_parameters = NA
+    , fisher_information = NA
+    , failcode = NA
+    , n_classes = 1L
+  )
 
+  for(i in cols) {
+    if(i %in% names(description)) {
+      object$description[[description[i]]] <- x[[i]]
+    }
+  }
+
+  # if(object$description$n_classes == 1) {
+  #   object$description$fisher_information <- 3
+  # }
+  if(object$description$fisher_information < 0) {
+    object$description$fisher_information <- 0
+  }
   object$description$fisher_information <- c("none", "observed", "montecarlo", "expected")[object$description$fisher_information + 1]
 
   # model fit ----
