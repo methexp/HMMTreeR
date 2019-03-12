@@ -32,6 +32,7 @@ lc <- function(
   , montecarlo_samples = 1e5
   , crit = "AIC"
   , verbose = FALSE
+  , keep_files = FALSE
 ){
 
   # Check if running on Windows
@@ -61,18 +62,23 @@ lc <- function(
   if(grepl(x = data_file, pattern = ".csv")) {
     tmp_dat <- read.csv(file = data_file)
     if(any(grepl(x = tmp_dat[, 1], pattern = ";"))) {
-      tmp_dat <- read.csv2(file = data_file)
+      tmp_dat <- read.csv2(file = data_file, check.names = FALSE)
       # print(tmp_dat)
     }
   } else {
     if(grepl(x = data_file, pattern = ".dat")) {
-      tmp_dat <- read.delim(file = data_file)
+      tmp_dat <- read.delim(file = data_file, check.names = FALSE)
     }
   }
   # print(tmp_dat)
+  if(!all(eqn_conv_out$cat_order %in% colnames(tmp_dat))) {
+    stop("Some categories defined in the .eqn file are missing from data.")
+  }
 
-  try_conv <- suppressWarnings(as.integer(eqn_conv_out$cat_order))
-  if(any(is.na(try_conv))) {
+  # try_conv <- suppressWarnings(as.integer(eqn_conv_out$cat_order))
+  # print(eqn_conv_out$cat_order)
+  # print(colnames(tmp_dat))
+  # if(any(is.na(try_conv))) {
     tmp_dat <- tmp_dat[, eqn_conv_out$cat_order]
     tmp_dat <- cbind(
       data.frame(
@@ -80,7 +86,7 @@ lc <- function(
       )
       , tmp_dat
     )
-  }
+  # }
 
   write.table(
     x = tmp_dat
@@ -110,7 +116,7 @@ lc <- function(
         , nruns = runs
         , fi = switch(fisher_information, "expected" = 3, "montecarlo" = 2, "observed" = 1, "none" = 0)
         , mc = montecarlo_samples
-        , keep_files = FALSE
+        , keep_files = keep_files
       )
     )
   } else {
@@ -134,7 +140,7 @@ lc <- function(
           , nruns = runs
           , fi = switch(fisher_information, "expected" = 3, "montecarlo" = 2, "observed" = 1, "none" = 0)
           , mc = montecarlo_samples
-          , keep_files = FALSE
+          , keep_files = keep_files
         )
       )
 
@@ -170,7 +176,9 @@ lc <- function(
   }
 
   # remove temporary files
-  file.remove(eqn_file, dat_file)
+  if(!keep_files) {
+    file.remove(eqn_file, dat_file)
+  }
 
   # return
   res

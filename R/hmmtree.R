@@ -56,6 +56,12 @@ hmmtreec <- function(
     , silent = TRUE
   )
 
+  if(class(out) == "try-error") {
+    err_files <- list.files(pattern = ".err")
+    cat("Errors in HMMTreeC.exe")
+    cat(unlist(sapply(err_files, FUN = readLines)), sep = "\n")
+  }
+
   if(!keep_files) {
     to_remove <- intersect(
       sub(list.files(recursive = TRUE, full.names = TRUE), pattern = "./", replacement = "")
