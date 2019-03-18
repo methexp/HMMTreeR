@@ -1,5 +1,9 @@
 # HMMTreeR
-An R Interface to HMMTree:
+
+HMMTreeR is an R interface to the program HMMTree. It allows fitting latent-class multinomial processing tree models.
+
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+
 
 Stahl, C., & Klauer, K.C. (2007).
 HMMTree: A computer program for hierarchical multinomial processing tree models. *Behavior Research Methods*, *39*, 267-273.
