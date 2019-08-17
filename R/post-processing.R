@@ -21,11 +21,10 @@ fit_statistics.lc_mpt <- function(x, ...) {
 
 
 #' @rdname fit_statistics
-#' @importFrom dplyr bind_rows
 #' @export
 
 fit_statistics.lc_mpt_list <- function(x, ...) {
-  dplyr::bind_rows(lapply(X = x, FUN = fit_statistics))
+  do.call(what = "rbind", args = lapply(X = x, FUN = fit_statistics))
 }
 
 
