@@ -112,7 +112,7 @@ model_object <- function(x) {
   i_class <- unlist(class_list)
 
   for (i in 1:length(parameter_names)) {
-    parameter_names[i] <- gsub(parameter_names[i], pattern = paste0("_", i_class[i]), replacement = "")
+    parameter_names[i] <- sub(parameter_names[i], pattern = paste0("_", i_class[i]), replacement = "")
   }
   # print(parameter_names)
 

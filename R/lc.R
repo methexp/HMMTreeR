@@ -125,9 +125,9 @@ lc <- function(
     repeat {
       if(verbose) {
         if(n_classes==1) {
-          cat("Fitting a latent-class MPT with one class (as a baseline).\n")
+          message("Fitting a latent-class MPT with one class (as a baseline).")
         } else {
-          cat("Fitting a latent-class MPT with", n_classes, "classes.\n")
+          message("Fitting a latent-class MPT with ", n_classes, " classes.")
         }
       }
 
