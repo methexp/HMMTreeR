@@ -12,3 +12,4 @@ Suggests:
 LazyData: true
 RoxygenNote: 7.1.0.9000
 VignetteBuilder: knitr
+License: MIT + file LICENSE
