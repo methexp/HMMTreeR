@@ -1,7 +1,7 @@
 6
-1 1 c
-1 1 (1-c)*u
-1 2 (1-c)*(1-u)
-2 4 c
-2 3 (1-c)*u
-2 4 (1-c)*(1-u)
+1 success.1 c
+1 success.1 (1-c)*u
+1 fail.1    (1-c)*(1-u)
+2 fail.2    c
+2 success.2 (1-c)*u
+2 fail.2    (1-c)*(1-u)
