@@ -118,7 +118,7 @@ model_object <- function(x) {
 
   object$parameter_estimates <- data.frame(
     parameter = parameter_names
-    , class = i_class
+    , class = as.integer(i_class)
     , estimate = as.numeric(x[, paste0(parameter_names, "_", i_class)])
     , lower = NA_real_
     , upper = NA_real_

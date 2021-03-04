@@ -43,8 +43,8 @@ lc <- function(
 
 
   # Input validation ----
-  if (!(crit %in% c("AIC","BIC"))) {
-    stop("Parameter crit must be either \"AIC\" or \"BIC\".")
+  if (!(crit %in% c("AIC","BIC", "BIC2"))) {
+    stop("Parameter crit must be one of 'AIC', 'BIC', or 'BIC2'.")
   }
 
 
@@ -161,8 +161,11 @@ lc <- function(
       }
 
       # Stop estimating more complex models if criterion (i.e., AIC or BIC) increased
-      if(n_classes > 1 && tmp$fit_statistics[[crit]] > res[[n_classes-1]]$fit_statistics[[crit]]) {
-        break
+      if(n_classes > 1) {
+        crit_new <- tmp$fit_statistics[[crit]]
+        crit_old <- res[[n_classes-1]]$fit_statistics[[crit]]
+
+        if(isTRUE(crit_new > crit_old)) break
       }
 
       res[[n_classes]] <- tmp

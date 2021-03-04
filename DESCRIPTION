@@ -10,6 +10,7 @@ Authors@R: c(
 Suggests:
   knitr
 LazyData: true
-RoxygenNote: 7.1.0.9000
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 License: MIT + file LICENSE
+Encoding: UTF-8
