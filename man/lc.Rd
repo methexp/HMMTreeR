@@ -4,11 +4,24 @@
 \alias{lc}
 \title{Fit latent-class MPT models}
 \usage{
-lc(model_file, data_file, classes = NULL, max_classes = 20,
-  runs = 20, fisher_information = "expected",
-  montecarlo_samples = 1e+05, crit = "AIC", verbose = FALSE)
+lc(
+  model_file,
+  data_file,
+  classes = NULL,
+  max_classes = 20,
+  runs = 20,
+  fisher_information = "expected",
+  montecarlo_samples = 1e+05,
+  crit = "AIC",
+  verbose = FALSE,
+  keep_files = FALSE
+)
 }
 \arguments{
+\item{model_file}{Character. File path to an .eqn file}
+
+\item{data_file}{Character. File path to a data file}
+
 \item{classes, max_classes}{The number of classes for a single model or the
 maximum number of classes. To estimate a single model, specify \code{classes};
 to estimate multiple models with increasing number of classes, specify \code{max_classes}.}
@@ -21,8 +34,14 @@ computed, the Monte Carlo method is used.}
 \item{montecarlo_samples}{The number of simulations to be used for Monte Carlo
 Fisher Information. Defaults to 1e5.}
 
+\item{crit}{If multiple models with an increasing number of classes are to be estimated,
+use this criterion to stop estimating more complex models. Can be one of \code{"AIC"},
+\code{"BIC"}, or \code{"BIC2"}.}
+
 \item{verbose}{Logical. Indicating whether an announcement is printed on the
 console when fitting of a new model starts.}
+
+\item{keep_files}{Logical. Should temporary files be retained?}
 }
 \description{
 This function estimates one or more latent-class MPT models.

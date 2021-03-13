@@ -4,6 +4,8 @@
 #' Starting from a one-class solution, it increments the number of latent classes
 #' until a criterion is met.
 #'
+#' @param model_file Character. File path to an .eqn file
+#' @param data_file Character. File path to a data file
 #' @param classes,max_classes The number of classes for a single model or the
 #' maximum number of classes. To estimate a single model, specify \code{classes};
 #' to estimate multiple models with increasing number of classes, specify \code{max_classes}.
@@ -13,8 +15,12 @@
 #'    computed, the Monte Carlo method is used.
 #' @param montecarlo_samples The number of simulations to be used for Monte Carlo
 #'   Fisher Information. Defaults to 1e5.
+#' @param crit If multiple models with an increasing number of classes are to be estimated,
+#'   use this criterion to stop estimating more complex models. Can be one of \code{"AIC"},
+#'   \code{"BIC"}, or \code{"BIC2"}.
 #' @param verbose Logical. Indicating whether an announcement is printed on the
 #'   console when fitting of a new model starts.
+#' @param keep_files Logical. Should temporary files be retained?
 #'
 #' @references
 #'   Stahl, C., & Klauer, K.C. (2007). HMMTree: A computer program for hierarchical
@@ -51,7 +57,7 @@ lc <- function(
 
   # Create legacy eqn file
   eqn_file <- paste0("HMMTreeR-tmpfile-", basename(model_file))
-  eqn_conv_out <- HMMTreeR:::simplify_eqn(model_file = model_file, eqn_file = eqn_file)
+  eqn_conv_out <- simplify_eqn(model_file = model_file, eqn_file = eqn_file)
 
 
   # Create HMMTree data file (tab-separated, first column is dataset name)
@@ -60,14 +66,14 @@ lc <- function(
   dat_file <- paste0("HMMTreeR-tmpfile-", dataset_name, ".dat")
 
   if(grepl(x = data_file, pattern = ".csv")) {
-    tmp_dat <- read.csv(file = data_file)
+    tmp_dat <- utils::read.csv(file = data_file)
     if(any(grepl(x = tmp_dat[, 1], pattern = ";"))) {
-      tmp_dat <- read.csv2(file = data_file, check.names = FALSE)
+      tmp_dat <- utils::read.csv2(file = data_file, check.names = FALSE)
       # print(tmp_dat)
     }
   } else {
     if(grepl(x = data_file, pattern = ".dat")) {
-      tmp_dat <- read.delim(file = data_file, check.names = FALSE)
+      tmp_dat <- utils::read.delim(file = data_file, check.names = FALSE)
     }
   }
   # print(tmp_dat)
@@ -88,7 +94,7 @@ lc <- function(
     )
   # }
 
-  write.table(
+  utils::write.table(
     x = tmp_dat
     , file = dat_file
     , sep = "\t"
@@ -109,8 +115,8 @@ lc <- function(
     # fit only one solution
     res <- model_object(
       hmmtreec(
-        model = eqn_file
-        , data = dat_file
+        model_file = eqn_file
+        , data_file = dat_file
         , nsubj = nsubj
         , nclass = classes
         , nruns = runs
@@ -133,8 +139,8 @@ lc <- function(
 
       tmp_hmmtreec <- try(
         hmmtreec(
-          model = eqn_file
-          , data = dat_file
+          model_file = eqn_file
+          , data_file = dat_file
           , nsubj = nsubj
           , nclass = n_classes
           , nruns = runs

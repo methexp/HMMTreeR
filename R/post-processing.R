@@ -2,6 +2,8 @@
 #'
 #' Extracts fit statistics from latent-class MPT model objects.
 #'
+#' @param x An object of classes \code{lc_mpt} or \code{lc_mpt_list}.
+#' @param ... Further arguments that may be passed to methods, currently ignored.
 #' @rdname fit_statistics
 #' @export
 
@@ -33,6 +35,8 @@ fit_statistics.lc_mpt_list <- function(x, ...) {
 #'
 #' Extracts parameter estimates from latent-class MPT model objects.
 #'
+#' @param x An object of classes \code{lc_mpt} or \code{lc_mpt_list}.
+#' @param ... Further arguments that may be passed to methods, currently ignored.
 #' @rdname parameter_estimates
 #' @export
 
@@ -64,8 +68,8 @@ parameter_estimates.lc_mpt_list <- function(x, ...) {
 #'
 #' Extract weighted means of parameter estimates.
 #'
-#' @param x An object of class \code{lc_mpt} or \code{lc_mpt_list}.
-#'
+#' @param x An object of classes \code{lc_mpt} or \code{lc_mpt_list}.
+#' @param ... Further arguments that may be passed to methods, currently ignored.
 #' @rdname weighted_means
 #' @export
 
@@ -82,7 +86,7 @@ weighted_means.lc_mpt <- function(x, ...) {
 
   # Calculate variances of parameter estimates
   # CS: variances = (CIs/1.96)^2
-  x$parameter_estimates$variance <- ((x$parameter_estimates$upper - x$parameter_estimates$estimate)/qnorm(p = 0.975))^2
+  x$parameter_estimates$variance <- ((x$parameter_estimates$upper - x$parameter_estimates$estimate)/stats::qnorm(p = 0.975))^2
 
   class_weights <- x$class_weights$estimate
   names(class_weights) <- x$class_weights$class
@@ -91,8 +95,8 @@ weighted_means.lc_mpt <- function(x, ...) {
   x$parameter_estimates$wm <- x$parameter_estimates$estimate *x$parameter_estimates$weights
   x$parameter_estimates$wv <- x$parameter_estimates$variance * x$parameter_estimates$weights^2
 
-  agg <- aggregate(formula = cbind(wm, wv) ~ parameter, data = x$parameter_estimates, FUN = sum)
-  ci <- sqrt(agg$wv) * qnorm(p = 0.975)
+  agg <- stats::aggregate(formula = cbind(wm, wv) ~ parameter, data = x$parameter_estimates, FUN = sum)
+  ci <- sqrt(agg$wv) * stats::qnorm(p = 0.975)
 
   out <- data.frame(
     parameter = agg$parameter
@@ -109,7 +113,7 @@ weighted_means.lc_mpt <- function(x, ...) {
 
 #' @rdname weighted_means
 #' @export
-#'
+
 weighted_means.lc_mpt_list <- function(x, ...) {
   lapply(X = x, weighted_means)
 }

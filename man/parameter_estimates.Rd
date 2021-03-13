@@ -12,6 +12,11 @@ parameter_estimates(x, ...)
 
 \method{parameter_estimates}{lc_mpt_list}(x, ...)
 }
+\arguments{
+\item{x}{An object of classes \code{lc_mpt} or \code{lc_mpt_list}.}
+
+\item{...}{Further arguments that may be passed to methods, currently ignored.}
+}
 \description{
 Extracts parameter estimates from latent-class MPT model objects.
 }
