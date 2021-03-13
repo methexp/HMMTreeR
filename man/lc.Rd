@@ -26,6 +26,8 @@ lc(
 maximum number of classes. To estimate a single model, specify \code{classes};
 to estimate multiple models with increasing number of classes, specify \code{max_classes}.}
 
+\item{runs}{Integer. Number of optimization runs.}
+
 \item{fisher_information}{The type of Fisher Information to be computed.
 Can be either \code{expected}, \code{montecarlo}, \code{observed}, or \code{none}.
 Defaults to \code{expected}. However, if expected Fisher Information cannot be

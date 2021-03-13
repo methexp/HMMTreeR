@@ -18,9 +18,9 @@ doi: [10.1007/s11336-004-1188-3](https://doi.org/10.1007/s11336-004-1188-3)
 See the package vignette for a short introduction.
 The model fitting can only be executed on a Windows machine.
 
-To install `HMMTreeR`, type:
+To install `HMMTreeR`, use:
 
 ```
-install.packages("devtools")
-devtools::install_github("methexp/HMMTreeR")
+if(!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("methexp/HMMTreeR")
 ```
