@@ -12,7 +12,7 @@ hmmtreec <- function(
   , keep_files = FALSE
 ){
 
-  path_to_exe <-paste0(find.package("HMMTreeR")[1], "/HMMTreeC.exe")
+  path_to_exe <- system.file("HMMTreeC.exe", package = "HMMTreeR")
 
   ## prepare output
   out <- NULL
@@ -40,12 +40,12 @@ hmmtreec <- function(
 
   system(
     command = paste(
-      c(path_to_exe
-        , file.path(getwd(), "control_file.txt")
+      c(encodeString(path_to_exe, quote = "\"")
+        , encodeString(file.path(getwd(), "control_file.txt"), quote = "\"")
       )
       , collapse = " "
     )
-    # , show.output.on.console = TRUE
+    , show.output.on.console = TRUE
   )
 
 
@@ -56,7 +56,7 @@ hmmtreec <- function(
     , silent = TRUE
   )
 
-  if(class(out) == "try-error") {
+  if(inherits(out, "try-error")) {
     err_files <- list.files(pattern = ".err")
     cat("Errors in HMMTreeC.exe")
     cat(unlist(sapply(err_files, FUN = readLines)), sep = "\n")
@@ -90,7 +90,7 @@ hmmtreec <- function(
     file.remove(to_remove)
   }
 
-  if(class(out)=="try-error") {
+  if(inherits(out, "try-error")) {
     stop("Output from HMMTreeC.exe not found.")
   }
 

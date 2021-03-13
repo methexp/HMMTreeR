@@ -114,17 +114,17 @@ lc <- function(
         , nsubj = nsubj
         , nclass = classes
         , nruns = runs
-        , fi = switch(fisher_information, "expected" = 3, "montecarlo" = 2, "observed" = 1, "none" = 0)
+        , fi = switch(fisher_information, "expected" = 3L, "montecarlo" = 2L, "observed" = 1L, "none" = 0L)
         , mc = montecarlo_samples
         , keep_files = keep_files
       )
     )
   } else {
     # Estimate more complex models until criterion is reached
-    n_classes <- 1
+    n_classes <- 1L
     repeat {
       if(verbose) {
-        if(n_classes==1) {
+        if(n_classes == 1L) {
           message("Fitting a latent-class MPT with one class (as a baseline).")
         } else {
           message("Fitting a latent-class MPT with ", n_classes, " classes.")
