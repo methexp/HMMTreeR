@@ -1,5 +1,3 @@
-[![R build status](https://github.com/methexp/HMMTreeR/workflows/R-CMD-check/badge.svg)](https://github.com/methexp/HMMTreeR/actions)
-
 # HMMTreeR
 
 HMMTreeR is an R interface to the program HMMTree. It allows fitting latent-class multinomial processing tree models.
