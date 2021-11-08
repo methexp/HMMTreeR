@@ -67,6 +67,18 @@ model_object <- function(x) {
   colnames(object$fit_statistics) <- fitstats
   object$fit_statistics[, fitstats[intersect(cols, names(fitstats))]] <- x[, intersect(cols, names(fitstats))]
 
+  stat_names <- intersect(c("M1", "M2", "S1", "S2"), colnames(object$fit_statistics))
+  for (i in stat_names) {
+    object$fit_statistics[[paste0("p_", i)]] <- pchisq(
+      q = object$fit_statistics[[i]]
+      , df = object$fit_statistics[[paste0("df_", i)]]
+      , lower.tail = FALSE
+    )
+  }
+
+
+
+
   # class weights ----
 
   weights <- cols[grepl(cols, pattern = "ClassWeight")]
