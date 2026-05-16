@@ -95,7 +95,7 @@ weighted_means.lc_mpt <- function(x, ...) {
   x$parameter_estimates$wm <- x$parameter_estimates$estimate *x$parameter_estimates$weights
   x$parameter_estimates$wv <- x$parameter_estimates$variance * x$parameter_estimates$weights^2
 
-  agg <- stats::aggregate(formula = cbind(wm, wv) ~ parameter, data = x$parameter_estimates, FUN = sum)
+  agg <- stats::aggregate(cbind(wm, wv) ~ parameter, data = x$parameter_estimates, FUN = sum)
   ci <- sqrt(agg$wv) * stats::qnorm(p = 0.975)
 
   out <- data.frame(
